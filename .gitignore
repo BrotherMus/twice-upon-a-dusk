@@ -1,0 +1,4 @@
+out/
+.claude/
+node_modules/
+*.tar.gz
