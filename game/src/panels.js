@@ -13,6 +13,12 @@ export function paintPicture(paint, props, pixelScale) {
   c.scale(pixelScale, pixelScale);
   paint(c);
   for (const p of props) if (!p.hidden) drawProp(c, p);
+  // A soft warm vignette, identical in both pictures, frames each scene like a print.
+  const v = c.createRadialGradient(SCENE.width / 2, SCENE.height / 2, 160, SCENE.width / 2, SCENE.height / 2, 400);
+  v.addColorStop(0, 'rgba(40,10,40,0)');
+  v.addColorStop(1, 'rgba(40,10,40,0.32)');
+  c.fillStyle = v;
+  c.fillRect(0, 0, SCENE.width, SCENE.height);
   return canvas;
 }
 
@@ -32,6 +38,10 @@ function drawFoundMarker(c, d, now) {
   const sweep = Math.min(1, age / 0.35);
   const pop = age < 0.5 ? 1 + Math.sin((age / 0.5) * Math.PI) * 0.25 : 1;
   const r = d.r * pop;
+  c.fillStyle = `rgba(255, 209, 102, ${0.1 + Math.max(0, 0.35 - age) })`;
+  c.beginPath();
+  c.arc(d.x, d.y, r, 0, Math.PI * 2);
+  c.fill();
   c.lineCap = 'round';
   c.strokeStyle = 'rgba(30,12,30,0.7)';
   c.lineWidth = 8;
@@ -61,7 +71,7 @@ function drawFoundMarker(c, d, now) {
 /** The hint: a golden ring that closes in on the difference, then breathes until it is found. */
 function drawHintRing(c, d, age) {
   const close = Math.min(1, age / 0.8);
-  const r = d.r * (1.6 + (1 - close) * 3) + Math.sin(age * 6) * 3 * close;
+  const r = Math.min(d.r * 1.35 + 14, 80) * (1 + (1 - close) * 2.2) + Math.sin(age * 6) * 3 * close;
   c.save();
   c.setLineDash([10, 8]);
   c.lineDashOffset = -age * 40;

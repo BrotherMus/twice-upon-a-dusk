@@ -22,7 +22,7 @@ const input = attachInput({ canvas, game, audio, renderer });
 renderer.resize();
 window.addEventListener('resize', () => renderer.resize());
 
-if (shot) setupShot(shot, game, effects);
+if (shot) setupShot(shot, game, effects, Number(params.get('scene') ?? 2));
 
 let lastAnnounced = '';
 /** Keeps the screen-reader line in step with the hunt. */

@@ -74,7 +74,7 @@ function drawCounter(c, state) {
   c.translate(30, 664);
   c.scale(pop, pop);
   text(c, String(left), 0, 0, 76, left === 0 ? PALETTE.good : PALETTE.gold);
-  const numberWidth = c.measureText(String(left)).width - 8;
+  const numberWidth = c.measureText(String(left)).width + 2;
   c.restore();
   text(c, 'LEFT', 40 + numberWidth, 640, 30, PALETTE.paper);
   text(c, `${total - left} of ${total} differences found`, 40 + numberWidth, 666, 17, 'rgba(255,244,227,0.75)', 'left', 700);

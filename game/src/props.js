@@ -476,6 +476,75 @@ export const KINDS = {
       glow(c, 0, -5, 9, p.color, 0.8);
       ellipse(c, 0, -5, 1.8, 1.8, '#fffbe0');
     } },
+  bamboo: { w: 34, h: 116, detail: 'top leaves',
+    draw(c, p) {
+      const stems = [[-10, 112], [0, 116], [10, 104]];
+      stems.forEach(([x, h], i) => {
+        box(c, x - 2.5, -h, 5, h, i === 1 ? p.color : shade(p.color, -0.12));
+        for (let y = -20; y > -h; y -= 22) box(c, x - 3.5, y, 7, 2, shade(p.color, -0.3));
+      });
+      c.fillStyle = shade(p.color, 0.15);
+      const leaf = (x, y, dir) => {
+        c.beginPath();
+        c.ellipse(x + dir * 9, y, 10, 3, dir * 0.35, 0, Math.PI * 2);
+        c.fill();
+      };
+      leaf(-10, -70, -1); leaf(10, -60, 1); leaf(0, -88, 1);
+      if (p.detail) { leaf(0, -110, -1); leaf(-10, -104, 1); leaf(10, -98, 1); }
+    } },
+  crane: { w: 36, h: 56, detail: 'red crown', flips: true,
+    draw(c, p) {
+      line(c, -2, 0, -3, -20, '#3a2233', 1.6);
+      line(c, 4, 0, 3, -20, '#3a2233', 1.6);
+      ellipse(c, 2, -26, 13, 8, p.color);
+      poly(c, [10, -28, 20, -22, 12, -22], '#3a2233');
+      c.strokeStyle = p.color;
+      c.lineWidth = 3.5;
+      c.lineCap = 'round';
+      c.beginPath();
+      c.moveTo(-6, -30);
+      c.quadraticCurveTo(-12, -44, -6, -50);
+      c.stroke();
+      ellipse(c, -5, -51, 4, 3.5, p.color);
+      poly(c, [-8, -51, -18, -49, -8, -49], '#e0a040');
+      if (p.detail) ellipse(c, -4, -54, 2.2, 1.6, '#e8364a');
+    } },
+  fox: { w: 44, h: 30, detail: 'white tail tip', flips: true,
+    draw(c, p) {
+      c.fillStyle = p.color;
+      c.beginPath();
+      c.ellipse(16, -12, 11, 5, -0.6, 0, Math.PI * 2);
+      c.fill();
+      if (p.detail) ellipse(c, 23, -17, 4, 3, '#fff4e3');
+      ellipse(c, 0, -10, 12, 7, p.color);
+      box(c, -8, -6, 3, 6, shade(p.color, -0.3));
+      box(c, 5, -6, 3, 6, shade(p.color, -0.3));
+      ellipse(c, -12, -17, 6.5, 5.5, p.color);
+      poly(c, [-17, -20, -16, -29, -11, -22], p.color);
+      poly(c, [-11, -22, -7, -29, -6, -19], p.color);
+      poly(c, [-17, -16, -24, -14, -16, -13], '#fff4e3');
+      ellipse(c, -13, -18, 1.2, 1.2, '#2a1830');
+    } },
+  reeds: { w: 26, h: 40, detail: 'cattail',
+    draw(c, p) {
+      [[-8, -30, -0.2], [0, -38, 0], [8, -28, 0.25], [-3, -24, -0.1]].forEach(([x, h, lean]) => {
+        line(c, x, 0, x + lean * 30, h, p.color, 2);
+      });
+      if (p.detail) {
+        c.fillStyle = '#7a4a2a';
+        c.beginPath();
+        c.ellipse(0, -36, 2.5, 6, 0, 0, Math.PI * 2);
+        c.fill();
+      }
+    } },
+  butterfly: { w: 16, h: 12, flips: true,
+    draw(c, p) {
+      ellipse(c, -4, -8, 4.5, 3.5, p.color);
+      ellipse(c, 4, -8, 4.5, 3.5, p.color);
+      ellipse(c, -3, -3, 3, 2.5, shade(p.color, -0.15));
+      ellipse(c, 3, -3, 3, 2.5, shade(p.color, -0.15));
+      line(c, 0, -11, 0, -1, '#2a1830', 1.4);
+    } },
   bunting: { w: 150, h: 30, detail: 'middle flag', fixed: true,
     draw(c, p) {
       c.strokeStyle = INK;
@@ -494,12 +563,17 @@ export const KINDS = {
     } },
 };
 
-/** Draws one prop in scene space, applying its position, scale and mirror. */
+/** Kinds that hang, fly, float or sit on a wall: they cast no ground shadow. */
+const UNGROUNDED = new Set(['cloud', 'bird', 'star', 'lantern', 'kite', 'firefly', 'bunting', 'butterfly', 'boat', 'buoy',
+  'koi', 'lily', 'frog', 'frame', 'bridge', 'lighthouse']);
+
+/** Draws one prop in scene space, applying its position, scale and mirror, with a soft shadow. */
 export function drawProp(c, prop) {
   const kind = KINDS[prop.kind];
   c.save();
   c.translate(prop.x, prop.y);
   c.scale(prop.flip ? -prop.s : prop.s, prop.s);
+  if (!UNGROUNDED.has(prop.kind)) ellipse(c, 0, -0.5, kind.w * 0.44, 3.2, 'rgba(25,8,30,0.3)');
   kind.draw(c, prop);
   c.restore();
 }

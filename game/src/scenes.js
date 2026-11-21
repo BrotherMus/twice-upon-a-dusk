@@ -46,6 +46,21 @@ function waterShimmer(c, x, top, bottom, color) {
   }
 }
 
+/** Little fans of grass blades at the given points (scenery: the same in both pictures). */
+function grassTufts(c, points, color = '#6d5a86') {
+  c.strokeStyle = color;
+  c.lineWidth = 1.6;
+  c.lineCap = 'round';
+  for (const [x, y] of points) {
+    c.beginPath();
+    for (let i = -2; i <= 2; i += 1) {
+      c.moveTo(x + i * 2, y);
+      c.lineTo(x + i * 4, y - 8 + Math.abs(i));
+    }
+    c.stroke();
+  }
+}
+
 function paintHarbor(c) {
   skyGradient(c, [[0, '#2d1f4f'], [0.35, '#8c3f6b'], [0.62, '#ff7b54'], [0.8, '#ffc778']], 262);
   sunDisc(c, 380, 246, 44, '#ffe3a3', '#ffb347');
@@ -139,6 +154,18 @@ function paintTeahouse(c) {
   c.lineTo(0, 450);
   c.fill();
   waterShimmer(c, 300, 392, 446, '#ffe2b8');
+  // Stone path from the teahouse door down to the bridge.
+  c.fillStyle = '#b48a8a';
+  c.beginPath();
+  c.moveTo(486, 304);
+  c.quadraticCurveTo(470, 340, 410, 372);
+  c.lineTo(440, 376);
+  c.quadraticCurveTo(500, 344, 514, 304);
+  c.closePath();
+  c.fill();
+  c.fillStyle = 'rgba(60,30,60,0.25)';
+  for (let i = 0; i < 6; i += 1) c.fillRect(492 - i * 15, 312 + i * 11, 18, 2);
+  grassTufts(c, [[30, 330], [120, 300], [180, 340], [230, 296], [300, 352], [350, 304], [420, 336], [560, 336], [590, 360], [160, 380]]);
   // The teahouse on the right: two curved roofs and a warm doorway.
   c.fillStyle = '#7a3f3f';
   c.fillRect(436, 222, 128, 82);
@@ -323,20 +350,25 @@ export function buildScene(id) {
       ] };
     case 'teahouse':
       return { paint: paintTeahouse, props: [
-        P('cloud', 90, 70, 0.8, '#ffc2a0'), P('cloud', 400, 56, 0.7, '#ffb38a'),
+        P('cloud', 90, 70, 0.8, '#ffc2a0'), P('cloud', 400, 56, 0.7, '#ffb38a'), P('cloud', 262, 34, 0.5, '#ffd0b0'),
         P('bird', 300, 80, 0.9, '#3a2233'), P('bird', 330, 96, 0.7, '#3a2233'), P('bird', 520, 110, 0.8, '#3a2233'),
         P('kite', 360, 150, 0.8, '#ff5d73'),
-        P('pine', 30, 300, 0.9, '#2f5a4f'), P('pine', 70, 296, 0.75, '#376a5a'), P('pine', 590, 300, 0.8, '#2f5a4f'),
-        P('pine', 390, 292, 0.6, '#376a5a'),
-        P('tree', 150, 314, 0.9, '#c2617a', '#ff9f43'),
+        P('bamboo', 20, 312, 1.0, '#5f9a5a'), P('bamboo', 50, 318, 0.82, '#6aa860'),
+        P('pine', 94, 300, 0.8, '#2f5a4f'), P('pine', 590, 300, 0.8, '#2f5a4f'), P('pine', 392, 292, 0.6, '#376a5a'),
+        P('tree', 150, 318, 0.95, '#c2617a', '#ff9f43'),
+        P('butterfly', 128, 236, 1.0, '#ffd166'), P('butterfly', 344, 286, 0.9, '#c77dff'),
         P('lantern', 450, 244, 0.75, '#ff7b54', '#ffd166'), P('lantern', 552, 244, 0.75, '#ff7b54', '#ffd166'),
-        P('bench', 250, 330, 1.0, '#8a4f3a'), P('teapot', 238, 314, 0.7, '#4ecdc4'), P('cup', 264, 316, 0.9, '#fff1dc'),
-        P('parasol', 300, 334, 1.1, '#e85d75'),
-        P('stoneLantern', 60, 376, 1.0, '#9a8fa8'), P('stoneLantern', 548, 380, 0.9, '#9a8fa8'),
-        P('bridge', 330, 404, 1.15, '#c0392b'),
-        P('rock', 140, 426, 1.0, '#6a5a7a'), P('rock', 470, 436, 0.9, '#7a6a8a'),
-        P('koi', 220, 436, 1.0, '#ff8c42', '#fff4e3'), P('koi', 420, 420, 0.9, '#fff4e3', '#ff5d5d'),
-        P('flower', 100, 330, 1.0, '#ffd166'), P('flower', 370, 334, 0.9, '#ff8fab'), P('mushroom', 196, 344, 1.0, '#e85d75'),
+        P('fox', 204, 356, 0.95, '#e8783c'),
+        P('bench', 262, 338, 1.0, '#8a4f3a'), P('teapot', 250, 322, 0.7, '#4ecdc4'), P('cup', 276, 324, 0.9, '#fff1dc'),
+        P('parasol', 318, 344, 1.1, '#e85d75'),
+        P('flower', 104, 344, 1.0, '#ffd166'), P('flower', 368, 352, 0.9, '#ff8fab'), P('flower', 398, 344, 0.8, '#c77dff'),
+        P('mushroom', 170, 368, 1.0, '#e85d75'),
+        P('stoneLantern', 60, 386, 1.0, '#9a8fa8'), P('stoneLantern', 560, 392, 0.9, '#9a8fa8'),
+        P('bridge', 330, 410, 1.15, '#c0392b'),
+        P('reeds', 96, 424, 1.0, '#7aa060'), P('reeds', 246, 436, 0.9, '#7aa060'), P('reeds', 588, 438, 1.0, '#7aa060'),
+        P('crane', 520, 444, 0.95, '#fff4e3'),
+        P('rock', 140, 432, 1.0, '#6a5a7a'), P('rock', 450, 440, 0.9, '#7a6a8a'),
+        P('koi', 196, 442, 1.0, '#ff8c42', '#fff4e3'), P('koi', 404, 428, 0.9, '#fff4e3', '#ff5d5d'),
       ] };
     case 'attic':
       return { paint: paintAttic, props: [

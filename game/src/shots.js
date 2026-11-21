@@ -17,7 +17,7 @@ function settle(effects, seconds) {
   for (let t = 0; t < seconds; t += 1 / 60) effects.update(1 / 60);
 }
 
-export function setupShot(name, game, effects) {
+export function setupShot(name, game, effects, sceneIndex = 2) {
   const state = game.state;
   switch (name) {
     case 'title':
@@ -54,7 +54,7 @@ export function setupShot(name, game, effects) {
     }
     case 'cover':
     default: {
-      game.startScene(2);
+      game.startScene(sceneIndex);
       state.screen = SCREEN.PLAY;
       state.journeyScore = 2850;
       findSome(game, 3, 9);
